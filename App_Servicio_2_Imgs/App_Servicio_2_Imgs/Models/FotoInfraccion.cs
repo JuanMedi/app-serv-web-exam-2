@@ -14,6 +14,8 @@ namespace App_Servicio_2_Imgs.Models
     
     public partial class FotoInfraccion
     {
+        internal int idFotoMulta;
+
         public int idFoto { get; set; }
         public string NombreFoto { get; set; }
         public int idInfraccion { get; set; }
