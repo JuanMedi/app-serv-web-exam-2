@@ -19,13 +19,6 @@ namespace App_Servicio_2_Imgs.Controllers
             clsInfraccion infraccion = new clsInfraccion();
             return infraccion.ConsultarImagenesXInfraccion(Placa);
         }
-        [HttpDelete]
-        [Route("EliminarImagen")]
-        public string EliminarImagen(int idFoto)
-        {
-            clsFotoInfraccion foto = new clsFotoInfraccion();
-            return foto.Borrar(idFoto);
-        }
         [HttpGet]
         [Route("Consultar")]
         public Infraccion Consultar(string Placa)
@@ -33,13 +26,12 @@ namespace App_Servicio_2_Imgs.Controllers
             clsInfraccion infraccion = new clsInfraccion();
             return infraccion.Consultar(Placa);
         }
-        [HttpPost]
-        [Route("Insertar")]
-        public string Insertar([FromBody] Infraccion infraccion)
+        [HttpGet]
+        [Route("ConsultarMultasPorPlaca")]
+        public List<object> ConsultarMultasPorPlaca(string placa)
         {
-            clsInfraccion Infraccion = new clsInfraccion();
-            Infraccion.infraccion  = infraccion;
-            return Infraccion.Insertar();
+            clsInfraccion infraccion = new clsInfraccion();
+            return infraccion.ConsultarMultasPorPlaca(placa);
         }
         [HttpPut]
         [Route("Actualizar")]
@@ -63,6 +55,37 @@ namespace App_Servicio_2_Imgs.Controllers
             clsVehiculo Vehiculo = new clsVehiculo();
             Vehiculo.vehiculo = vehiculo;
             return Vehiculo.Insertar();
+        }
+
+        [HttpDelete]
+        [Route("EliminarImagenesPorInfraccion")]
+        public string EliminarImagenesPorInfraccion(int idFotoMulta)
+        {
+            clsFotoInfraccion foto = new clsFotoInfraccion();
+            return foto.BorrarImagenesPorInfraccion(idFotoMulta);
+        }
+
+        [HttpPost]
+        [Route("Insertar")]
+        public string InsertaryValidar([FromBody] Infraccion infraccion)
+        {
+            if (infraccion == null || string.IsNullOrEmpty(infraccion.PlacaVehiculo))
+            {
+                return "Error: Datos inválidos";
+            }
+
+            clsInfraccion Infraccion = new clsInfraccion();
+            using (var db = new DBExamenEntities())
+            {
+                bool placaExiste = db.Infraccions.Any(i => i.PlacaVehiculo == infraccion.PlacaVehiculo);
+
+                if (placaExiste)
+                {
+                    return "Error: La infracción con esta placa ya existe.";
+                }
+            }
+            Infraccion.infraccion = infraccion;
+            return Infraccion.Insertar();
         }
     }
 }

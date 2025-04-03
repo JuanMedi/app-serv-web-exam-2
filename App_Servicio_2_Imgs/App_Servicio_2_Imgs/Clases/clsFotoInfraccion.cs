@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
 using System.Web;
 using App_Servicio_2_Imgs.Models;
@@ -42,6 +43,39 @@ namespace App_Servicio_2_Imgs.Clases
                 return "No se enviaron los Archivos para guardar";
             }
         }
+
+        public string BorrarImagenesPorInfraccion(int idFotoMulta)
+        {
+            try
+            {
+                var imagenes = dbfoto.FotoInfraccions.Where(f => f.idFotoMulta == idFotoMulta).ToList();
+
+                if (!imagenes.Any())
+                {
+                    return "No hay imágenes asociadas a esta infracción.";
+                }
+
+                string ruta = HttpContext.Current.Server.MapPath("~/Archivos");
+
+                foreach (var imagen in imagenes)
+                {
+                    string archivo = Path.Combine(ruta, imagen.NombreFoto);
+                    if (File.Exists(archivo))
+                    {
+                        File.Delete(archivo);
+                    }
+                    dbfoto.FotoInfraccions.Remove(imagen);
+                }
+
+                dbfoto.SaveChanges();
+                return "Imágenes eliminadas correctamente.";
+            }
+            catch (Exception ex)
+            {
+                return "Error al eliminar imágenes: " + ex.Message;
+            }
+        }
+
 
     }
 }

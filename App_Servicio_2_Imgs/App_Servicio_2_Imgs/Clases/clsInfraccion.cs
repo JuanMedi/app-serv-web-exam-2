@@ -75,5 +75,27 @@ namespace App_Servicio_2_Imgs.Clases
                        Imagen = Im.NombreFoto
                    };
         }
+
+        public List<object> ConsultarMultasPorPlaca(string placa)
+        {
+            return (from v in dbinfraccion.Set<Vehiculo>()
+                             join i in dbinfraccion.Infraccions on v.Placa equals i.PlacaVehiculo
+                             join f in dbinfraccion.FotoInfraccions on i.idFotoMulta equals f.idFotoMulta into fotos
+                             from f in fotos.DefaultIfEmpty() // Left join para incluir multas sin fotos
+                             where v.Placa == placa
+                             select new
+                             {
+                                 Placa = v.Placa,
+                                 TipoVehiculo = v.TipoVehiculo,
+                                 Marca = v.Marca,
+                                 Color = v.Color,
+                                 IdFotomulta = i.idFotoMulta,
+                                 FechaInfraccion = i.FechaInfraccion,
+                                 TipoInfraccion = i.TipoInfraccion,
+                                 Imagen = f != null ? f.NombreFoto : null
+                             }).ToList<object>();
+
+        }
+
     }
 }
