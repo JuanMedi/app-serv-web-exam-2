@@ -1,1 +1,4 @@
-# app-serv-web-exam-2
+# Evento evaluativo # 2
+# Aplicaciones y Servicios Web
+# Manejo y Gestion de Imagenes desde Postman 
+# Validacion en la Base de Datos
